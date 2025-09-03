@@ -2,41 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Cozy, warm design system with soft pastels and delightful animations */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm, cozy background */
+    --background: 30 30% 98%;
+    --foreground: 25 15% 20%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Soft cards with subtle warmth */
+    --card: 30 50% 97%;
+    --card-foreground: 25 15% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 30 50% 97%;
+    --popover-foreground: 25 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Warm primary - soft peach/coral */
+    --primary: 15 80% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 15 70% 75%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Soft secondary - warm gray */
+    --secondary: 25 20% 92%;
+    --secondary-foreground: 25 15% 30%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted warm tones */
+    --muted: 30 25% 94%;
+    --muted-foreground: 25 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Gentle accent - soft sage green */
+    --accent: 120 25% 85%;
+    --accent-foreground: 120 30% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Soft destructive */
+    --destructive: 0 70% 70%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Subtle borders */
+    --border: 30 20% 88%;
+    --input: 30 20% 90%;
+    --ring: 15 60% 60%;
 
-    --radius: 0.5rem;
+    /* Cozy radius */
+    --radius: 1rem;
+
+    /* Custom design tokens */
+    --gradient-warm: linear-gradient(135deg, hsl(15 70% 85%), hsl(30 60% 90%));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --shadow-soft: 0 8px 32px -8px hsl(var(--primary) / 0.15);
+    --shadow-card: 0 4px 20px -4px hsl(25 15% 20% / 0.08);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
