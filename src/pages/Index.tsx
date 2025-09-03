@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { PhotoUpload } from '@/components/PhotoUpload';
 import { EventCard, EventData } from '@/components/EventCard';
 import { CalendarView } from '@/components/CalendarView';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
 import { useEventStorage } from '@/hooks/useEventStorage';
 import { useToast } from '@/hooks/use-toast';
+import { imageAnalysisService } from '@/utils/imageAnalysisService';
 import { Sparkles } from 'lucide-react';
 
 const Index = () => {
@@ -11,65 +13,29 @@ const Index = () => {
   const { toast } = useToast();
   const [currentEvent, setCurrentEvent] = useState<EventData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [apiKey, setApiKey] = useState<string>('');
 
-  // Simulate OCR/AI extraction (in a real app, this would call an API)
-  const simulateEventExtraction = (file: File): Promise<EventData> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Generate random realistic event data
-        const eventTitles = [
-          "Birthday Party",
-          "Wedding Reception",
-          "Graduation Ceremony",
-          "Anniversary Dinner",
-          "Beach Vacation",
-          "Concert Night",
-          "Family Reunion",
-          "Holiday Celebration",
-          "Business Conference",
-          "Art Gallery Opening"
-        ];
-
-        const contexts = [
-          "Downtown restaurant with friends and family",
-          "Beautiful garden venue with amazing decorations",
-          "University auditorium filled with proud families",
-          "Cozy home setting with loved ones",
-          "Sunny beach with crystal clear waters",
-          "Outdoor amphitheater under the stars",
-          "Family home backyard with barbecue and games",
-          "Decorated living room with holiday spirit",
-          "Convention center with industry professionals",
-          "Modern gallery space showcasing local artists"
-        ];
-
-        // Generate a date within the next 30 days
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + Math.floor(Math.random() * 30));
-        
-        // Generate a random time
-        const hours = Math.floor(Math.random() * 12) + 9; // 9 AM to 8 PM
-        const minutes = Math.random() < 0.5 ? '00' : '30';
-
-        const extractedData: EventData = {
-          id: Date.now().toString(),
-          title: eventTitles[Math.floor(Math.random() * eventTitles.length)],
-          date: futureDate.toISOString().split('T')[0],
-          time: `${hours.toString().padStart(2, '0')}:${minutes}`,
-          context: contexts[Math.floor(Math.random() * contexts.length)],
-          photoUrl: URL.createObjectURL(file)
-        };
-
-        resolve(extractedData);
-      }, 2000); // 2 second delay to simulate processing
-    });
+  const extractEventFromImage = async (file: File): Promise<EventData> => {
+    if (!apiKey) {
+      throw new Error('OpenAI API key is required');
+    }
+    return await imageAnalysisService.analyzeImage(file, apiKey);
   };
 
   const handlePhotoUpload = async (file: File) => {
+    if (!apiKey) {
+      toast({
+        title: "API key required",
+        description: "Please set your OpenAI API key first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     
     try {
-      const extractedEvent = await simulateEventExtraction(file);
+      const extractedEvent = await extractEventFromImage(file);
       setCurrentEvent(extractedEvent);
       
       toast({
@@ -77,9 +43,10 @@ const Index = () => {
         description: "Review and edit the event details below.",
       });
     } catch (error) {
+      console.error('Photo analysis error:', error);
       toast({
-        title: "Oops! Something went wrong",
-        description: "Please try uploading your photo again.",
+        title: "Analysis failed",
+        description: error instanceof Error ? error.message : "Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -120,8 +87,11 @@ const Index = () => {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* API Key Section */}
+        <ApiKeyInput onApiKeySet={setApiKey} hasApiKey={!!apiKey} />
+        
         {/* Upload Section */}
-        <PhotoUpload onPhotoUpload={handlePhotoUpload} isProcessing={isProcessing} />
+        {apiKey && <PhotoUpload onPhotoUpload={handlePhotoUpload} isProcessing={isProcessing} />}
 
         {/* Event Card Section */}
         {currentEvent && (
